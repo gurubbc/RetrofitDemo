@@ -6,44 +6,35 @@ import retrofit2.Call;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
+import retrofit2.converter.scalars.ScalarsConverterFactory;
 
 public class ClientCode {
 
 	public static void main(String[] args) throws IOException {
-		// We are going to call REST API programmatically
-		// We will convert the JSON into Java object of Todo type
-		
 		Retrofit retrofit=new Retrofit.Builder()
 				.baseUrl("https://jsonplaceholder.typicode.com/todos/")
 				.addConverterFactory(GsonConverterFactory.create())
 				.build();
-				
-		// REturns me an implementation of TodoService interfacce
-		TodoService todoService=  retrofit.create(TodoService.class);
-				
-		// Call m1() which you left as unimplemented in the interface
+		TodoService todoService=retrofit.create(TodoService.class);
 		Call<Todo> call=todoService.m1();
-		
-		// Let's invoke the execute() method that will actually fire the REST API
-		
-		Response<Todo>  response=call.execute();
-		
+		Response<Todo> response=call.execute();
 		if (response.isSuccessful())
 		{
-			System.out.println("Successful");
-			Todo todoObj=response.body();
-			// you can deal this just like a normal regular Java object
-			
-			System.out.println("Title found is "+todoObj.title);
-		
+			System.out.println(response.body());
+			Todo todoObject=(Todo)response.body();
+			System.out.println(todoObject);
+			System.out.println(todoObject.getUserId());
+			todoObject.getId();
+			System.out.println(todoObject.getId()+ " and "+ todoObject.getTitle()+ " and "+todoObject.isCompleted());
 			
 		}
 		else
 		{
-			System.out.println("Failure");
-			System.out.println(response.code());
-			
+			int httpErrorCode=response.code();
+			Todo todo=response.body();
+			System.out.println(httpErrorCode+" and "+todo);
 		}
+		
 	}
 
 }
